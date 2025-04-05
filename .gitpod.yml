@@ -1,0 +1,11 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Display Installs and Help
+    command: |
+      brew install syft
+      brew tap interlynk-io/interlynk
+      brew install sbomasm sbomqs
+      gp open README.md
+      
