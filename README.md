@@ -21,6 +21,9 @@ brew install sbomasm sbomqs
 # Install parlay for SBOM enrichment
 brew install parlay
 
+# Install cosign for SBOM signing
+brew install cosign
+
 # Install bomctl for SBOM sharing and distribution
 brew tap bomctl/bomctl
 brew install bomctl
