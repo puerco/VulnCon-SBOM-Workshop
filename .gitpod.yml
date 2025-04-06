@@ -4,7 +4,7 @@ image:
 tasks:
   - name: Install Tools
     command: |
-      brew install syft
+      brew install trivy
       brew tap interlynk-io/interlynk
       brew install sbomasm sbomqs
       brew install parlay
