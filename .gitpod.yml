@@ -1,3 +1,6 @@
+image:
+  file: .gitpod.Dockerfile
+
 tasks:
   - name: Display Installs and Help
     command: |
@@ -5,4 +8,3 @@ tasks:
       brew tap interlynk-io/interlynk
       brew install sbomasm sbomqs
       gp open README.md
-      
