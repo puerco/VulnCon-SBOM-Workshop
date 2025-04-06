@@ -13,7 +13,7 @@ Alternatively you can install all of these tools and follow along with this READ
 __No need to execute this in your Gitpod environment.__
 
 ``` bash
-# Install Syft for SBOM generation
+# Install Trivy for SBOM generation
 brew install trivy
 
 # Install sbomasm and sbomqs for SBOM augmentation and quality scoring
@@ -29,13 +29,17 @@ brew install cosign
 # Install bomctl for SBOM sharing and distribution
 brew tap bomctl/bomctl
 brew install bomctl
+
+# Install cosign and bnd to sign and attest the SBOMs
+brew install cosign
+
 ```
 
 ## Better SBOM Generation
 
 ### `Generation` Step
 
-Generate an SBOM for `kubectl` using Syft.
+Generate an SBOM for `kubectl` using Trivy.
 
 ``` bash
 curl -L -o /tmp/kubectl.tgz \
@@ -128,13 +132,92 @@ sbomqs score generated.cdx.json
 sbomqs score enriched-sbom.cdx.json
 ```
 
-### `Signing` Step
+### Rename the SBOM
 
-Use `cosign` to sign the SBOM. This step signs the SBOM and pushes the signature to [rekor](https://search.sigstore.dev/).
+At this point we want to rename the SBOM to meet the OpenSSF naming recomendation
+schema. This is to make it easy to relate the SBOM with its released artifacts:
+
+```bash
+mv enriched-sbom.cdx.json kubectl-v0.31.1.cdx.json
+```
+
+### Generate SPDX Variant
+
+For completeness and maximum compatibility, create the SPDX variant
+of our enriched SBOM:
+
+```bash
+unpack sbom kubectl-v0.31.1.cdx.json --format=spdx >  kubectl-v0.31.1.spdx.json
+```
+
+### Signing and Attesting
+
+#### Plain Signing
+
+Next up, we'll sign the enriched software bill of materials. This step will
+create a detached certificate and signature fiel pair you can distribute to
+verify the SBOM.
+
+> [!NOTE]
+> The following command will open the cosign signing flow, authenticate with
+> your OIDC provider (Google/GitHub/Microsoft) and you are done. If you are
+> following in the GitPod tutorial, you will need to copy + paste the URL in
+> your browser and then put the resulting code in the terminal.
+
+```bash
+# Sign the CycloneDX variant
+cosign sign-blob kubectl-v0.31.1.cdx.json \
+   --output-certificate=kubectl-v0.31.1.cdx.json.pem \
+   --output-signature=kubectl-v0.31.1.cdx.json.sig
+
+# Sign the SPDX variant
+cosign sign-blob kubectl-v0.31.1.spdx.json \
+   --output-certificate=kubectl-v0.31.1.spdx.json.pem \
+   --output-signature=kubectl-v0.31.1.spdx.json.sig
+```
+
+Verify the signed SBOM with `cosign verify`:
 
 ``` bash
-cosign sign-blob enriched-sbom.cdx.json
+cosign verify-blob kubectl-v0.31.1.cdx.json \
+    --certificate=kubectl-v0.31.1.cdx.json.pem \
+    --signature=kubectl-v0.31.1.cdx.json.sig 
 ```
+
+#### Attesting
+
+Creating an attestation cryptographically binds the SBOM to the artifact it
+describes. In addition, attestations wrapped in bundles can be distributed with
+all their verification material in a single file which is often more convenient
+than the artifact+cert+signature trio.
+
+```bash
+# Create the attestation bundle, it will use as its subject the hash of the
+# downloaded source tarball:
+bnd predicate kubectl-v0.31.1.cdx.json \
+    --type=https://cyclonedx.org/bom \
+    --subject-file=/tmp/kubectl.tgz \
+    --out=kubectl-v0.31.1.cdx.bundle.json
+
+# Same with the SPDX variant:
+bnd predicate kubectl-v0.31.1.spdx.json \
+    --type=https://spdx.dev/Document \
+    --subject-file=/tmp/kubectl.tgz \
+    --out=kubectl-v0.31.1.spdx.bundle.json
+```
+
+Now finaly, we should pack all attestations into a single distributable file:
+
+```bash
+# This packs both attestations into a linear json bundle 
+bnd pack -o kubectl-v0.31.1.bundle.jsonl \
+  kubectl-v0.31.1.cdx.bundle.json \
+  kubectl-v0.31.1.spdx.bundle.json
+```
+
+After this step you will have a single file `kubectl-v0.31.1.bundle.jsonl` containing
+both signed SBOMs wrapped in their attestations together with all the verification
+material required to verify the documents. 
 
 ## SBOM Sharing
 
