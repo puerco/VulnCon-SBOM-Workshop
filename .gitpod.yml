@@ -21,6 +21,8 @@ tasks:
       brew install duckdb
       curl -o /home/linuxbrew/.linuxbrew/bin/bnd -L https://github.com/carabiner-dev/bnd/releases/download/v0.0.1/bnd-v0.0.1-linux-amd64
       chmod 0755 /home/linuxbrew/.linuxbrew/bin/bnd
+      curl -o /home/linuxbrew/.linuxbrew/bin/unpack -L https://github.com/carabiner-dev/unpack/releases/download/v0.1.0-pre5/unpack-v0.1.0-pre5-linux-amd64
+      chmod 0755 /home/linuxbrew/.linuxbrew/bin/unpack
   
   - name: Launch Zot
     command: |
