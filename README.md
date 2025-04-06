@@ -126,6 +126,14 @@ sbomqs score generated.cdx.json
 sbomqs score enriched-sbom.cdx.json
 ```
 
+### `Signing` Step
+
+Use `cosign` to sign the SBOM. This step signs the SBOM and pushes the signature to [rekor](https://search.sigstore.dev/).
+
+``` bash
+cosign sign-blob enriched-sbom.cdx.json
+```
+
 ## SBOM Sharing
 
 This will recursively fetch the SBOM at this URL, and any internally referenced SBOMs (for this example it will fetch two SBOMs)
@@ -162,6 +170,10 @@ export BOMCTL_PORT_URL="${url#*://}"
 # Push the SBOM to the OCI registry and convert to SPDX format
 bomctl push -f spdx urn:uuid:f360ad8b-dc41-4256-afed-337a04dff5db oci://${BOMCTL_PORT_URL}/hello-bomctl:latest
 ```
+
+This will push the SBOM to the OCI registry and convert it to SPDX format.
+
+You can view the layers in Zot, the OCI registry running in Gitpod, by clicking on the "PORTS" tab (next to the "TERMINAL" tab) and then clicking on the "Address" next to the port 5000.
 
 ## SBOM Operations
 
