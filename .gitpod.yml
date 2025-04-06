@@ -1,6 +1,12 @@
 image:
   file: .gitpod.Dockerfile
 
+ports:
+  - name: Zot registry
+    description: Test OCI registry
+    port: 5000
+    visibility: public
+
 tasks:
   - name: Install Tools
     command: |
@@ -8,6 +14,19 @@ tasks:
       brew tap interlynk-io/interlynk
       brew install sbomasm sbomqs
       brew install parlay
+      brew install cosign
+      brew tap bomctl/bomctl
+      brew install bomctl
+  
+  - name: Launch Zot
+    command: |
+      docker run -d -p 5000:5000 --name oras-quickstart ghcr.io/project-zot/zot-linux-amd64:latest
+      brew install oras
+      gp ports await 5000
+      url="$(gp url 5000)"
+      export BOMCTL_PORT_URL="${url#*://}"
+      oras push ${BOMCTL_PORT_URL}/hello-bomctl:v0.0.0 examples/bomctl_0.1.1_darwin_arm64.tar.gz.cdx.json
+
   - name: Display Help
     command: |
       gp open README.md
