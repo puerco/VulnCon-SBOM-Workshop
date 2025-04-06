@@ -17,6 +17,7 @@ tasks:
       brew install cosign
       brew tap bomctl/bomctl
       brew install bomctl
+      brew install osv-scanner
   
   - name: Launch Zot
     command: |
