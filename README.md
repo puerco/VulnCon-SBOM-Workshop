@@ -33,6 +33,11 @@ brew install bomctl
 # Install cosign and bnd to sign and attest the SBOMs
 brew install cosign
 
+# Install duckdb
+brew install duckdb
+
+# Install osv-scanner
+brew install osv-scanner
 ```
 
 ## Better SBOM Generation
