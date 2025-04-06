@@ -52,7 +52,7 @@ metadata to the document and primary component.
 
 ``` bash
 # Augment the Generated CycloneDX with updated document information
-/tmp/sbomasm edit --subject Document \
+sbomasm edit --subject Document \
     --author 'VulnCon SBOM Generation Workshop' \
     --supplier 'kubernetes (https://kubernetes.io/kubectl)' \
     --lifecycle 'pre-build' \
@@ -61,7 +61,7 @@ metadata to the document and primary component.
     generated.cdx.json > augmented-docs-sbom.cdx.json
 
 # Augment the Generated CycloneDX with updated primary component information
-/tmp/sbomasm edit --subject primary-component \
+sbomasm edit --subject primary-component \
     --author 'VulnCon SBOM Generation Workshop' \
     --supplier 'kubernetes (https://kubernetes.io/kubectl)' \
     --repository 'https://github.com/kubernetes/kubectl' \
@@ -69,9 +69,19 @@ metadata to the document and primary component.
     augmented-docs-sbom.cdx.json > augmented-sbom.cdx.json
 ```
 
-#### Expected Output File
+#### Expected Output
 
-- `augmented-sbom.cdx.json`
+The following files were created in this step:
+
+- `augmented-docs-sbom.cdx.json` - SBOM with updated document metadata
+- `augmented-sbom.cdx.json` - SBOM with updated document and primary component metadata
+
+You can view a diff of the changes made to the SBOM by running the following command:
+
+``` bash
+code --diff generated.cdx.json augmented-sbom.cdx.json
+```
+
 
 ### Step `Enrichment`
 
@@ -81,15 +91,41 @@ metadata to components.
 ``` bash
 parlay ecosystems enrich \
     augmented-sbom.cdx.json > enriched-sbom.cdx.json
+
+# Since parlay doesn't pretty its generated json, use jq to format it.
+jq . enriched-sbom.cdx.json > enriched-sbom.pretty.cdx.json
 ```
 
 #### Expected Output File
 
-- `enriched-sbom.cdx.json`
+The following files were created in this step:
+
+- `enriched-sbom.cdx.json` - the component metadata enriched SBOM
+- `enriched-sbom.pretty.cdx.json` - the component metadata enriched SBOM, pretty printed
+
+You can view a diff of the changes made to the SBOM by running the following command:
+
+``` bash
+code --diff augmented-sbom.cdx.json enriched-sbom.pretty.cdx.json
+```
 
 ### Step `Validation`
+
+Use `sbomqs` to validate the SBOM. This step checks the SBOM for common issues.
 
 ``` bash
 sbomqs score generated.cdx.json
 sbomqs score enriched-sbom.cdx.json
 ```
+
+## SBOM Sharing
+
+TODO
+
+## SBOM Operations
+
+TODO
+
+## VEX
+
+TODO
