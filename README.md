@@ -12,7 +12,7 @@ Alternatively you can install all of these tools and follow along with this READ
 
 ``` bash
 # Install Syft for SBOM generation
-brew install syft
+brew install trivy
 
 # Install sbomasm and sbomqs for SBOM augmentation and quality scoring
 brew tap interlynk-io/interlynk
@@ -22,9 +22,9 @@ brew install sbomasm sbomqs
 brew install parlay
 ```
 
-## SBOM Generation
+## Better SBOM Generation
 
-### Step `Generation`
+### `Generation` Step
 
 Generate an SBOM for `kubectl` using Syft.
 
@@ -41,11 +41,13 @@ trivy fs \
    kubectl-0.31.1
 ```
 
-#### Expected Output File
+#### Expected `Generation` Output
+
+This step should generate the following file:
 
 - `generated.cdx.json`
 
-### Step `Augmentation`
+### `Augmentation` Step
 
 Add missing metadata to the generated SBOM using `sbomasm`. This step adds
 metadata to the document and primary component.
@@ -69,7 +71,7 @@ sbomasm edit --subject primary-component \
     augmented-docs-sbom.cdx.json > augmented-sbom.cdx.json
 ```
 
-#### Expected Output
+#### Expected `Augmentation` Output
 
 The following files were created in this step:
 
@@ -82,8 +84,7 @@ You can view a diff of the changes made to the SBOM by running the following com
 code --diff generated.cdx.json augmented-sbom.cdx.json
 ```
 
-
-### Step `Enrichment`
+### `Enrichment` Step
 
 Enrich the SBOM with additional metadata using `parlay`. This step adds
 metadata to components.
@@ -96,7 +97,7 @@ parlay ecosystems enrich \
 jq . enriched-sbom.cdx.json > enriched-sbom.pretty.cdx.json
 ```
 
-#### Expected Output File
+#### Expected `Enrichment` Output
 
 The following files were created in this step:
 
@@ -109,7 +110,7 @@ You can view a diff of the changes made to the SBOM by running the following com
 code --diff augmented-sbom.cdx.json enriched-sbom.pretty.cdx.json
 ```
 
-### Step `Validation`
+### `Validation` Step
 
 Use `sbomqs` to validate the SBOM. This step checks the SBOM for common issues.
 
