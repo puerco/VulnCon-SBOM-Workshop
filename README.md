@@ -20,6 +20,10 @@ brew install sbomasm sbomqs
 
 # Install parlay for SBOM enrichment
 brew install parlay
+
+# Install bomctl for SBOM sharing and distribution
+brew tap bomctl/bomctl
+brew install bomctl
 ```
 
 ## Better SBOM Generation
@@ -121,7 +125,40 @@ sbomqs score enriched-sbom.cdx.json
 
 ## SBOM Sharing
 
-TODO
+This will recursively fetch the SBOM at this URL, and any internally referenced SBOMs (for this example it will fetch two SBOMs)
+
+``` bash
+bomctl fetch https://raw.githubusercontent.com/bomctl/bomctl-playground/main/examples/bomctl-container-image/bomctl_bomctl_v0.3.0.cdx.json
+```
+
+After fetching the SBOMs, you can list the SBOMs that have been fetched:
+
+``` bash
+bomctl list
+```
+
+View the SBOMs that have been fetched:
+
+``` bash
+bomctl export https://anchore.com/syft/file/bomctl_0.3.0_linux_amd64.tar.gz-1b838d44-9d3c-47d0-9f7f-846397e701fa#DOCUMENT
+```
+
+Convert between SBOM formats:
+
+``` bash
+bomctl export -f cyclonedx https://anchore.com/syft/file/bomctl_0.3.0_linux_amd64.tar.gz-1b838d44-9d3c-47d0-9f7f-846397e701fa#DOCUMENT
+```
+
+Lets list one of the two SBOMs that we have fetched into a OCI Registry:
+
+``` bash
+# Get the URL and port of the OCI registry running in Gitpod
+url="$(gp url 5000)"
+export BOMCTL_PORT_URL="${url#*://}"
+
+# Push the SBOM to the OCI registry and convert to SPDX format
+bomctl push -f spdx urn:uuid:f360ad8b-dc41-4256-afed-337a04dff5db oci://${BOMCTL_PORT_URL}/hello-bomctl:latest
+```
 
 ## SBOM Operations
 
