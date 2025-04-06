@@ -6,9 +6,11 @@ This repo creates a [Gitpod Environment](https://gitpod.io/?autostart=true&useLa
 
 To help you get started, we have created a Gitpod environment that has all the tools you need to complete the workshop. To get started, click the link below to start the Gitpod environment.
 
-- [Start Gitpod Environment](https://gitpod.io/?autostart=true&useLatest=true#https://github.com/SBOM-Community/VulnCon-SBOM-Workshop)
+- [Start Gitpod Environment](https://gitpod.io/?autostart=true&useLatest=true#https://github.com/SBOM-Community/VulnCon-SBOM-Workshop) __<-- Start Here__
 
 Alternatively you can install all of these tools and follow along with this README.md file.
+
+__No need to execute this in your Gitpod environment.__
 
 ``` bash
 # Install Syft for SBOM generation
