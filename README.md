@@ -228,6 +228,43 @@ After this step you will have a single file `kubectl-v0.31.1.bundle.jsonl` conta
 both signed SBOMs wrapped in their attestations together with all the verification
 material required to verify the documents. 
 
+### Verification
+
+Recepients of signed SBOMs should verify the authenticity and integrity of the
+documents. Throughout this tutorial we've produced two kinds of signed SBOMs.
+Let's verify them.
+
+#### Detached Signature Verification
+
+To verify the signature of an SBOM with a detached signature and its certificate
+invoke cosign:
+
+```bash
+cosign verify-blob kubectl-v0.31.1.cdx.json \
+  --certificate kubectl-v0.31.1.cdx.json.pem \
+  --signature kubectl-v0.31.1.cdx.json.sig \
+  --certificate-identity-regexp='.*' \
+  --certificate-oidc-issuer-regexp='.*'
+```
+
+#### Verify a a bundled attestation
+
+To verify a bundled attestation, you only need the bundle file:
+
+```bash
+# Verify the attestation with bnd:
+bnd verify --skip-identity kubectl-v0.31.1.cdx.bundle.json
+
+# This should output
+# ✅ Bundle Verification OK!
+```
+
+> [!WARNING]
+> Note that both examples, in cosign's case allowing any string with the regular
+> expression `'.*'` and in the second with `--skip-identity` we are not checking
+> the signer identity. The expected identity must be checked when verifying as 
+> part of the policy.
+
 ## SBOM Sharing
 
 This will recursively fetch the SBOM at this URL, and any internally referenced SBOMs (for this example it will fetch two SBOMs)
