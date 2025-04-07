@@ -26,12 +26,16 @@ brew install parlay
 # Install cosign for SBOM signing
 brew install cosign
 
+# To attest and convert the SBOM, fetch binaries for bnd and unpack
+# for your local architecture (these are prereleases so they are not on 
+# homebrew yet, sorry!)
+
+# https://github.com/carabiner-dev/bnd/releases/latest
+# https://github.com/carabiner-dev/unpack/releases/tag/v0.1.0-pre5
+
 # Install bomctl for SBOM sharing and distribution
 brew tap bomctl/bomctl
 brew install bomctl
-
-# Install cosign and bnd to sign and attest the SBOMs
-brew install cosign
 
 # Install duckdb
 brew install duckdb
