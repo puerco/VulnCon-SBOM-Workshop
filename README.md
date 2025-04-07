@@ -255,8 +255,17 @@ To verify a bundled attestation, you only need the bundle file:
 # Verify the attestation with bnd:
 bnd verify --skip-identity kubectl-v0.31.1.cdx.bundle.json
 
-# This should output
+# Expected:
 # ✅ Bundle Verification OK!
+
+# Inspect the bundle's metadata
+bnd inspect kubectl-v0.31.1.cdx.bundle.json
+
+# Extract the unsigned attestation wrapping the SBOM:
+bnd extract statement kubectl-v0.31.1.cdx.bundle.json
+
+# > Note the subject data, binding the sbom to the file
+
 ```
 
 > [!WARNING]
