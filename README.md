@@ -361,6 +361,3 @@ osv-scanner fix \
 
 ```
 
-## VEX
-
-TODO
