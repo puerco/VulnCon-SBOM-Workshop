@@ -267,7 +267,49 @@ You can view the layers in Zot, the OCI registry running in Gitpod, by clicking 
 
 ## SBOM Operations
 
-TODO
+If you want to run some GUAC demos, see: https://docs.guac.sh/setup-install/
+
+Collect SBOMs:
+
+```bash
+# Fetch an SBOM
+curl -LO https://raw.githubusercontent.com/SBOM-Community/VulnCon-SBOM-Workshop/refs/heads/main/examples/scalibr.spdx.json
+# Look at the SBOM
+cat scalibr.spdx.json
+```
+
+Correlate an SBOM with vulnerability data:
+
+```bash
+# OSV Scanner correlates data from the OSV vulnerability database
+osv-scanner scan --sbom scalibr.spdx.json --format vertical
+```
+
+Use DuckDB to understand all unique packages across multiple SBOMs:
+
+```bash
+duckdb
+D CREATE TABLE sbom AS
+· SELECT * FROM read_json_auto('*.json', auto_detect=true, maximum_object_size="333554428");
+D SELECT DISTINCT package.unnest.name AS package_name
+·   FROM
+·       sbom,
+‣       UNNEST(packages) AS package;
+```
+
+Use OSV Scanner to fix any vulnerabilities in a project:
+
+```bash
+git clone https://github.com/whiskeytastingfoundation/wtf-frontend
+cd wtf-frontend
+osv-scanner fix \
+    --max-depth=3 \
+    --min-severity=5 \
+    --ignore-dev  \
+    --strategy=in-place \
+    -L package-lock.json
+
+```
 
 ## VEX
 
